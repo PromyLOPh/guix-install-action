@@ -1,0 +1,29 @@
+name: test
+on: [push]
+jobs:
+  build:
+    name: Test Guix installation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Guix cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/guix
+          # use a key that (almost) never matches
+          key: guix-cache-${{ github.sha }}
+          restore-keys: |
+            guix-cache-
+      # Cannot use a cache for /gnu/store, since restore fails
+      - name: Install Guix
+        uses: PromyLOPh/guix-install-action@v1
+      - name: Build hello
+        run: guix build hello
+      # Pack independent binary and upload as artifact
+      - name: Pack
+        run: guix pack --relocatable --save-provenance --root=hello.tar.bz2 --compression=bzip2 hello
+      - name: Upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: hello
+          path: hello.tar.bz2
+

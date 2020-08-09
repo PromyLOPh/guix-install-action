@@ -1,0 +1,26 @@
+name: guix-install
+description: Install GNU Guix
+branding:
+  icon: 'package'
+  color: 'gray-dark'
+runs:
+  using: 'composite'
+  steps: 
+    - run: wget https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh
+      shell: bash
+      name: Download
+    - run: wget "https://sv.gnu.org/people/viewgpg.php?user_id=15145" -qO - | gpg --import -
+      shell: bash
+      name: Fetch key
+    - run: echo -e 'y\ny' | sudo bash guix-install.sh
+      shell: bash
+      name: Install Guix
+    # Use the GitHub mirror to decrease load on Savannah. Update global guix,
+    # so we get a fresh daemon as well.
+    - run: sudo guix pull --url=https://github.com/guix-mirror/guix.git --fallback
+      shell: bash
+      name: Update Guix
+    - run: sudo systemctl restart guix-daemon
+      shell: bash
+      name: Restart daemon
+
