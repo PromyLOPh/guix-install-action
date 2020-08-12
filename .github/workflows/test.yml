@@ -21,9 +21,19 @@ jobs:
       # Pack independent binary and upload as artifact
       - name: Pack
         run: guix pack --relocatable --save-provenance --root=hello.tar.bz2 --compression=bzip2 hello
-      - name: Upload
+      - name: Nar
+        run: guix archive --export hello > hello.nar
+      - name: Upload pack
         uses: actions/upload-artifact@v2
         with:
-          name: hello
+          name: hello pack
           path: hello.tar.bz2
-
+      # Store auto-generated signing key as well, so it can be authenticated
+      # later
+      - name: Upload nar
+        uses: actions/upload-artifact@v2
+        with:
+          name: hello nar
+          path: |
+            hello.nar
+            /etc/guix/signing-key.pub

@@ -23,4 +23,7 @@ runs:
     - run: sudo systemctl restart guix-daemon
       shell: bash
       name: Restart daemon
+    - run: sudo guix archive --generate-key
+      shell: bash
+      name: Generate keys
 
