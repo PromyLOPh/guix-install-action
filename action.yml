@@ -9,7 +9,7 @@ runs:
     - run: wget https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh
       shell: bash
       name: Download
-    - run: wget "https://sv.gnu.org/people/viewgpg.php?user_id=15145" -qO - | gpg --import -
+    - run: wget "https://sv.gnu.org/people/viewgpg.php?user_id=15145" -qO - | sudo gpg --import -
       shell: bash
       name: Fetch key
     - run: echo -e 'y\ny' | sudo bash guix-install.sh
