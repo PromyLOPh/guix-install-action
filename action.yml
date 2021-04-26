@@ -3,9 +3,14 @@ description: Install GNU Guix
 branding:
   icon: 'package'
   color: 'gray-dark'
+inputs:
+  channels:
+    description: Guile expression representing the Guix channel(s) to pull
+    required: false
+    default: '%default-channels'
 runs:
   using: 'composite'
-  steps: 
+  steps:
     - run: wget https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh
       shell: bash
       name: Download
@@ -17,7 +22,12 @@ runs:
       name: Install Guix
     # Use the GitHub mirror to decrease load on Savannah. Update global guix,
     # so we get a fresh daemon as well.
-    - run: sudo guix pull --url=https://github.com/guix-mirror/guix.git --fallback
+    - run: |
+        echo Invoking 'guix pull' with the following channel specification:
+        echo
+        echo "${{ inputs.channels }}" | tee /tmp/channels.scm
+        echo
+        sudo guix pull --url=https://github.com/guix-mirror/guix.git --fallback -C /tmp/channels.scm
       shell: bash
       name: Update Guix
     - run: sudo systemctl restart guix-daemon
