@@ -37,3 +37,34 @@ jobs:
           path: |
             hello.nar
             /etc/guix/signing-key.pub
+  build-with-channels:
+    name: Test Guix installation with different channels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Guix cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/guix
+          # use a key that (almost) never matches
+          key: guix-cache-${{ github.sha }}
+          restore-keys: |
+            guix-cache-
+      # Cannot use a cache for /gnu/store, since restore fails
+      - name: Install Guix
+        uses: PromyLOPh/guix-install-action@v1
+        with:
+          channels: |-
+            (cons
+             (channel
+              (name 'guix-science)
+              (url "https://github.com/guix-science/guix-science.git")
+              (introduction
+               (make-channel-introduction
+                "b1fe5aaff3ab48e798a4cce02f0212bc91f423dc"
+                (openpgp-fingerprint
+                 "CA4F 8CF4 37D7 478F DA05  5FD4 4213 7701 1A37 8446"))))
+             %default-channels)
+      - name: guix describe
+        run: guix describe
+      - name: Build from external channel
+        run: guix build python-jupyterlab

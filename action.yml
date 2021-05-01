@@ -3,27 +3,55 @@ description: Install GNU Guix
 branding:
   icon: 'package'
   color: 'gray-dark'
+inputs:
+  channels:
+    description: 'Guix channel description as Scheme code'
+    required: false
+    # Use the GitHub mirror to decrease load on Savannah.
+    default: |-
+      (map (lambda (chan)
+             (if (guix-channel? chan)
+                 (channel
+                  (inherit chan)
+                  (url "https://github.com/guix-mirror/guix.git"))
+                 chan))
+           %default-channels)
 runs:
   using: 'composite'
   steps: 
-    - run: wget https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh
+    - run: wget -nv https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh
       shell: bash
       name: Download
-    - run: wget "https://sv.gnu.org/people/viewgpg.php?user_id=15145" -qO - | sudo gpg --import -
+    - run: |
+        wget "https://sv.gnu.org/people/viewgpg.php?user_id=127547" -qO - | sudo gpg --import -
+        wget "https://sv.gnu.org/people/viewgpg.php?user_id=15145" -qO - | sudo gpg --import -
       shell: bash
       name: Fetch key
     - run: echo -e 'y\ny' | sudo bash guix-install.sh
       shell: bash
       name: Install Guix
-    # Use the GitHub mirror to decrease load on Savannah. Update global guix,
-    # so we get a fresh daemon as well.
-    - run: sudo guix pull --url=https://github.com/guix-mirror/guix.git --fallback
-      shell: bash
-      name: Update Guix
-    - run: sudo systemctl restart guix-daemon
-      shell: bash
-      name: Restart daemon
-    - run: sudo guix archive --generate-key
+    - run: sudo -i guix archive --generate-key
       shell: bash
       name: Generate keys
+    - run: |
+        cat <<EOF > ${{ runner.temp }}/channels.scm
+        ${{ inputs.channels }}
+        EOF
+      shell: bash
+      name: Create channel file
+    - run: guix pull -C ${{ runner.temp }}/channels.scm
+      shell: bash
+      name: Update Guix
+    # Use daemon from user, so we don’t have to `guix pull` twice.
+    - run: |
+        sudo sed -i "s/root/${USER}/" /etc/systemd/system/guix-daemon.service
+        sudo systemctl daemon-reload
+        sudo systemctl restart guix-daemon
+      shell: bash
+      name: Restart daemon
+    # Initially inherit root’s Guix profile, so we can use guix commands without sudo
+    - run: |
+        echo "$HOME/.config/guix/current/bin" >> $GITHUB_PATH
+      shell: bash
+      name: Set PATH
 
