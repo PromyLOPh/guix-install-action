@@ -1,11 +1,20 @@
-GNU Guix GitHub install action
-==============================
+Install GNU Guix (GitHub Action)
+================================
 
 .. image:: https://github.com/PromyLOPh/guix-install-action/workflows/test/badge.svg
 
-Install GNU Guix. See `this repository’s test action
+This GitHub action installs GNU Guix, a functional package manager and
+distribution, inside a GitHub Action runner.
+
+It can be used to build Guix packages themselves, but also to create
+deliverables like self-contained relocatable binaries, Docker images or
+SquashFS filesystems. See `guix pack
+<https://guix.gnu.org/manual/devel/en/guix.html#Invoking-guix-pack>`__ for more
+information.
+
+`This repository’s test action
 <https://github.com/PromyLOPh/guix-install-action/blob/master/.github/workflows/test.yml>`__
-for an example.
+showcases the available options.
 
 Inputs
 ------
