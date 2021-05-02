@@ -1,5 +1,5 @@
-name: guix-install
-description: Install GNU Guix
+name: Install GNU Guix
+description: Add GNU guix package manager to GitHub Action runner.
 branding:
   icon: 'package'
   color: 'gray-dark'
