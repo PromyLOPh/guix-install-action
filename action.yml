@@ -58,4 +58,6 @@ runs:
         echo "$HOME/.config/guix/current/bin" >> $GITHUB_PATH
       shell: bash
       name: Set PATH
-
+    - run: guix describe -f channels-sans-intro
+      shell: bash
+      name: guix describe
