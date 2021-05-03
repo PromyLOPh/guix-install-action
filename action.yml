@@ -43,7 +43,7 @@ runs:
         EOF
       shell: bash
       name: Create channel file
-    - run: guix pull -C ${{ runner.temp }}/channels.scm
+    - run: guix pull --fallback -C ${{ runner.temp }}/channels.scm
       shell: bash
       name: Update Guix
     # Use daemon from user, so we don’t have to `guix pull` twice.
