@@ -75,7 +75,5 @@ jobs:
                 (openpgp-fingerprint
                  "CA4F 8CF4 37D7 478F DA05  5FD4 4213 7701 1A37 8446"))))
              %default-channels)
-      - name: guix describe
-        run: guix describe
       - name: Build from external channel
         run: guix build python-jupyterlab
