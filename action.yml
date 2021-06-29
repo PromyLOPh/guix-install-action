@@ -18,7 +18,12 @@ inputs:
            %default-channels)
 runs:
   using: 'composite'
-  steps: 
+  steps:
+    # The default locale on Debian and Ubuntu is "C.UTF-8" which does not exist
+    # in vanilla glibc.  Change to something that works for Guix and Debuntu.
+    - run: echo LANG=en_US.utf8 >> $GITHUB_ENV
+      shell: bash
+      name: Set LANG
     - run: |
         wget -nv https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh
         wget -nv https://ci.guix.gnu.org/search/latest/archive?query=spec:tarball+status:success+system:x86_64-linux+guix-binary.tar.xz -O guix-binary-nightly.x86_64-linux.tar.xz

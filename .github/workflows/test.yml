@@ -16,6 +16,8 @@ jobs:
       # Cannot use a cache for /gnu/store, since restore fails
       - name: Install Guix
         uses: PromyLOPh/guix-install-action@v1
+      - name: Ensure no locale warning
+        run: test -z "$(guix --version 2>&1 >/dev/null)"
       - name: Build hello
         run: guix build hello
       # Pack independent binary
