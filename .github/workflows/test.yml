@@ -79,3 +79,11 @@ jobs:
              %default-channels)
       - name: Build from external channel
         run: guix build python-jupyterlab
+      # Test that the channels output can be pulled.  This operation should
+      # complete quickly.
+      - name: Build with time machine
+        run: |
+          cat <<EOF > ${{ runner.temp }}/channels.scm
+          ${{ steps.install-guix.outputs.channels }}
+          EOF
+          guix time-machine -C ${{ runner.temp }}/channels.scm -- build python-jupyterlab

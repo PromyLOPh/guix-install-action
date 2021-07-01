@@ -23,3 +23,10 @@ Inputs
     A Scheme expression that describes the Guix channels to use. See `manual
     <https://guix.gnu.org/manual/devel/en/guix.html#Specifying-Additional-Channels>`__
 
+
+Outputs
+-------
+
+:channels:
+     The exact channel(s) that were pulled, with commit identifiers.  The output
+     can be used as an input for this action to reproduce a previous run.

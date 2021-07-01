@@ -16,6 +16,10 @@ inputs:
                   (url "https://github.com/guix-mirror/guix.git"))
                  chan))
            %default-channels)
+outputs:
+  channels:
+    description: 'Exact Guix channels that were used for this action.'
+    value: ${{ steps.guix-describe.outputs.channels }}
 runs:
   using: 'composite'
   steps:
@@ -63,6 +67,9 @@ runs:
         echo "$HOME/.config/guix/current/bin" >> $GITHUB_PATH
       shell: bash
       name: Set PATH
-    - run: guix describe -f channels-sans-intro
+    # Substitute newlines to work-around GitHubs single-line limitation.
+    - run: |
+        echo "::set-output name=channels::$(guix describe -f channels | tr '\n' ' ')"
       shell: bash
       name: guix describe
+      id: guix-describe
