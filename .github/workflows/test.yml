@@ -64,6 +64,7 @@ jobs:
             guix-cache-
       # Cannot use a cache for /gnu/store, since restore fails
       - name: Install Guix
+        id: install-guix
         uses: PromyLOPh/guix-install-action@v1
         with:
           channels: |-
