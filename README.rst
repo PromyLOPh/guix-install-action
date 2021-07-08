@@ -13,7 +13,7 @@ SquashFS filesystems. See `guix pack
 information.
 
 `This repository’s test action
-<https://github.com/PromyLOPh/guix-install-action/blob/master/.github/workflows/test.yml>`__
+<https://github.com/PromyLOPh/guix-install-action/blob/v1/.github/workflows/test.yml>`__
 showcases the available options.
 
 Inputs
