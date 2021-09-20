@@ -40,7 +40,7 @@ runs:
       name: Fetch key
     - run: |
         export GUIX_BINARY_FILE_NAME=guix-binary-nightly.x86_64-linux.tar.xz
-        echo -e 'y\ny' | sudo --preserve-env=GUIX_BINARY_FILE_NAME bash guix-install.sh
+        echo -e '\ny\ny' | sudo --preserve-env=GUIX_BINARY_FILE_NAME bash guix-install.sh
       shell: bash
       name: Install Guix
     - run: sudo -i guix archive --generate-key
