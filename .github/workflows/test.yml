@@ -88,3 +88,15 @@ jobs:
           ${{ steps.install-guix.outputs.channels }}
           EOF
           guix time-machine -C ${{ runner.temp }}/channels.scm -- build python-jupyterlab
+  build-without-pull:
+    name: Test without pulling
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Guix
+        id: install-guix
+        uses: PromyLOPh/guix-install-action@v1
+        with:
+          pullAfterInstall: false
+      - name: Build hello
+        run: guix build hello
+

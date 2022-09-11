@@ -22,7 +22,10 @@ Inputs
 :channels:
     A Scheme expression that describes the Guix channels to use. See `manual
     <https://guix.gnu.org/manual/devel/en/guix.html#Specifying-Additional-Channels>`__
-
+:pullAfterInstall:
+    Run `guix pull` after installing Guix. If set to `false` the latest
+    Guix package as defined in `(gnu packages package-management)`
+    will be used, which is older than the git master.
 
 Outputs
 -------

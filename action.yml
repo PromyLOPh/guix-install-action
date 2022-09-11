@@ -16,6 +16,10 @@ inputs:
                   (url "https://github.com/guix-mirror/guix.git"))
                  chan))
            %default-channels)
+  pullAfterInstall:
+    description: 'Run `guix pull` after installing Guix'
+    required: false
+    default: true
 outputs:
   channels:
     description: 'Exact Guix channels that were used for this action.'
@@ -55,6 +59,7 @@ runs:
     - run: guix pull --fallback -C ${{ runner.temp }}/channels.scm
       shell: bash
       name: Update Guix
+      if: ${{ inputs.pullAfterInstall == 'true' }}
     # Use daemon from user, so we don’t have to `guix pull` twice.
     - run: |
         sudo sed -i "s/root/${USER}/" /etc/systemd/system/guix-daemon.service
@@ -62,6 +67,7 @@ runs:
         sudo systemctl restart guix-daemon
       shell: bash
       name: Restart daemon
+      if: ${{ inputs.pullAfterInstall == 'true' }}
     # Initially inherit root’s Guix profile, so we can use guix commands without sudo
     - run: |
         echo "$HOME/.config/guix/current/bin" >> $GITHUB_PATH
