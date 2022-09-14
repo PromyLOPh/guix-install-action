@@ -24,6 +24,7 @@ inputs:
     description: "URL to fetch a binary Guix installation from."
     required: false
     default: "https://ci.guix.gnu.org/search/latest/archive?query=spec:tarball+status:success+system:x86_64-linux+guix-binary.tar.xz"
+outputs:
   channels:
     description: 'Exact Guix channels that were used for this action.'
     value: ${{ steps.guix-describe.outputs.channels }}
