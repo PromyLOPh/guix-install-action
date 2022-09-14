@@ -99,7 +99,7 @@ jobs:
           pullAfterInstall: false
       - name: Build hello
         run: guix build hello
-  build-with-guix-binary-url
+  build-with-guix-binary-url:
     name: Test with custom binary URL
     runs-on: ubuntu-latest
     steps:
