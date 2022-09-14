@@ -38,7 +38,7 @@ runs:
       name: Set LANG
     - run: |
         wget -nv https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh
-        wget -nv ${inputs.guixBinaryUrl} -O guix-binary-nightly.x86_64-linux.tar.xz
+        wget -nv ${{ inputs.guixBinaryUrl }} -O guix-binary-nightly.x86_64-linux.tar.xz
       shell: bash
       name: Download
     - run: |
