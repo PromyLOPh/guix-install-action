@@ -15,7 +15,7 @@ jobs:
             guix-cache-
       # Cannot use a cache for /gnu/store, since restore fails
       - name: Install Guix
-        uses: PromyLOPh/guix-install-action@v1
+        uses: PromyLOPh/guix-install-action@custom-install-url
       - name: Ensure no locale warning
         run: test -z "$(guix --version 2>&1 >/dev/null)"
       - name: Build hello
@@ -65,7 +65,7 @@ jobs:
       # Cannot use a cache for /gnu/store, since restore fails
       - name: Install Guix
         id: install-guix
-        uses: PromyLOPh/guix-install-action@v1
+        uses: PromyLOPh/guix-install-action@custom-install-url
         with:
           channels: |-
             (cons
@@ -94,9 +94,19 @@ jobs:
     steps:
       - name: Install Guix
         id: install-guix
-        uses: PromyLOPh/guix-install-action@v1
+        uses: PromyLOPh/guix-install-action@custom-install-url
         with:
           pullAfterInstall: false
       - name: Build hello
         run: guix build hello
-
+  build-with-guix-binary-url
+    name: Test with custom binary URL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Guix
+        id: install-guix
+        uses: PromyLOPh/guix-install-action@custom-install-url
+        with:
+          guixBinaryUrl: "https://6xq.net/paste/guix-tarball-pack.tar.xz"
+      - name: Build hello
+        run: guix build hello

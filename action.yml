@@ -20,7 +20,10 @@ inputs:
     description: 'Run `guix pull` after installing Guix'
     required: false
     default: true
-outputs:
+  guixBinaryUrl:
+    description: "URL to fetch a binary Guix installation from."
+    required: false
+    default: "https://ci.guix.gnu.org/search/latest/archive?query=spec:tarball+status:success+system:x86_64-linux+guix-binary.tar.xz"
   channels:
     description: 'Exact Guix channels that were used for this action.'
     value: ${{ steps.guix-describe.outputs.channels }}
@@ -34,7 +37,7 @@ runs:
       name: Set LANG
     - run: |
         wget -nv https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh
-        wget -nv https://ci.guix.gnu.org/search/latest/archive?query=spec:tarball+status:success+system:x86_64-linux+guix-binary.tar.xz -O guix-binary-nightly.x86_64-linux.tar.xz
+        wget -nv ${inputs.guixBinaryUrl} -O guix-binary-nightly.x86_64-linux.tar.xz
       shell: bash
       name: Download
     - run: |

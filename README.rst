@@ -22,6 +22,14 @@ Inputs
 :channels:
     A Scheme expression that describes the Guix channels to use. See `manual
     <https://guix.gnu.org/manual/devel/en/guix.html#Specifying-Additional-Channels>`__
+:guixBinaryUrl:
+    Use custom location for downloading the Guix binaries. This can be
+    used in combination with ``pullAfterInstall: false`` to fetch a more
+    recent tarball built with
+
+    .. code:: bash
+
+        guix pack -C xz --fallback --localstatedir --profile-name=current-guix -e '((@ (gnu packages package-management) current-guix))'
 :pullAfterInstall:
     Run `guix pull` after installing Guix. If set to `false` the latest
     Guix package as defined in `(gnu packages package-management)`
