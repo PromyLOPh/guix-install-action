@@ -75,7 +75,7 @@ runs:
       name: Set PATH
     # Substitute newlines to work-around GitHubs single-line limitation.
     - run: |
-        echo "::set-output name=channels::$(guix describe -f channels | tr '\n' ' ')"
+        echo "channels=$(guix describe -f channels | tr '\n' ' ')" >> $GITHUB_OUTPUT
       shell: bash
       name: guix describe
       id: guix-describe
