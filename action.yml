@@ -38,8 +38,8 @@ runs:
       shell: bash
       name: Download
     - run: |
-        wget "https://sv.gnu.org/people/viewgpg.php?user_id=127547" -qO - | sudo gpg --import -
-        wget "https://sv.gnu.org/people/viewgpg.php?user_id=15145" -qO - | sudo gpg --import -
+        wget "https://savannah.gnu.org/people/viewgpg.php?user_id=127547" -qO - | sudo gpg --import -
+        wget "https://savannah.gnu.org/people/viewgpg.php?user_id=15145" -qO - | sudo gpg --import -
       shell: bash
       name: Fetch key
     - run: |
