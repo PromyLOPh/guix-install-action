@@ -15,7 +15,7 @@ jobs:
             guix-cache-
       # Cannot use a cache for /gnu/store, since restore fails
       - name: Install Guix
-        uses: PromyLOPh/guix-install-action@yesnewlines
+        uses: PromyLOPh/guix-install-action@yesnewline
       - name: Ensure no locale warning
         run: test -z "$(guix --version 2>&1 >/dev/null)"
       - name: Build hello
@@ -65,7 +65,7 @@ jobs:
       # Cannot use a cache for /gnu/store, since restore fails
       - name: Install Guix
         id: install-guix
-        uses: PromyLOPh/guix-install-action@yesnewlines
+        uses: PromyLOPh/guix-install-action@yesnewline
         with:
           channels: |-
             (cons
@@ -94,7 +94,7 @@ jobs:
     steps:
       - name: Install Guix
         id: install-guix
-        uses: PromyLOPh/guix-install-action@yesnewlines
+        uses: PromyLOPh/guix-install-action@yesnewline
         with:
           pullAfterInstall: false
       - name: Build hello
