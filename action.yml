@@ -42,7 +42,7 @@ runs:
     - run: |
         export GUIX_BINARY_FILE_NAME=guix-binary-nightly.x86_64-linux.tar.xz
         ls -lhaR /home/runner/work/_temp/
-        yes "" | sudo --preserve-env=GUIX_BINARY_FILE_NAME bash --noprofile --norc guix-install.sh
+        echo -e "\n\n\n\n\n\n" | sudo --preserve-env=GUIX_BINARY_FILE_NAME bash --noprofile --norc guix-install.sh
         ls -lhaR /home/runner/work/_temp/
       shell: bash
       name: Install Guix
