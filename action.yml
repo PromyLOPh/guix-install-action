@@ -44,7 +44,7 @@ runs:
       name: Fetch key
     - run: |
         export GUIX_BINARY_FILE_NAME=guix-binary-nightly.x86_64-linux.tar.xz
-        sudo --preserve-env=GUIX_BINARY_FILE_NAME -- bash -c 'yes "" | bash guix-install.sh'
+        sudo --preserve-env=GUIX_BINARY_FILE_NAME -- bash -c 'env --default-signal=PIPE yes "" | bash guix-install.sh'
       shell: bash
       name: Install Guix
     - run: sudo -i guix archive --generate-key
