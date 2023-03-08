@@ -47,37 +47,3 @@ runs:
         sudo --preserve-env=GUIX_BINARY_FILE_NAME -- bash -c 'env --default-signal=PIPE yes "" | bash guix-install.sh'
       shell: bash
       name: Install Guix
-    - run: sudo -i guix archive --generate-key
-      shell: bash
-      name: Generate keys
-    - run: |
-        cat <<EOF > ${{ runner.temp }}/channels.scm
-        ${{ inputs.channels }}
-        EOF
-      shell: bash
-      name: Create channel file
-    - run: guix pull --fallback -C ${{ runner.temp }}/channels.scm
-      shell: bash
-      name: Update Guix
-      if: ${{ inputs.pullAfterInstall == 'true' }}
-    # Use daemon from user, so we don’t have to `guix pull` twice.
-    - run: |
-        sudo sed -i "s/root/${USER}/" /etc/systemd/system/guix-daemon.service
-        sudo systemctl daemon-reload
-        sudo systemctl restart guix-daemon
-      shell: bash
-      name: Restart daemon
-      if: ${{ inputs.pullAfterInstall == 'true' }}
-    # Initially inherit root’s Guix profile, so we can use guix commands without sudo
-    - run: |
-        echo "$HOME/.config/guix/current/bin" >> $GITHUB_PATH
-      shell: bash
-      name: Set PATH
-    # Substitute newlines to work-around GitHubs single-line limitation.
-    - run: |
-        echo "channels<<EOF" >> $GITHUB_OUTPUT
-        guix describe -f channels >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
-      shell: bash
-      name: guix describe
-      id: guix-describe
