@@ -33,8 +33,9 @@ runs:
       shell: bash
       name: Set LANG
     - run: |
-        wget -nv https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh
-        wget -nv https://ci.guix.gnu.org/search/latest/archive?query=spec:tarball+status:success+system:x86_64-linux+guix-binary.tar.xz -O guix-binary-nightly.x86_64-linux.tar.xz
+        wget -nv https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh?h=3893758dac76fc30b23d4715e849e262306f268d -O guix-install.sh
+        wget -nv https://raw.githubusercontent.com/TxGVNN/guix-install-action/v1/guix-install.sh.patch -O guix-install.sh.patch
+        patch guix-install.sh < guix-install.sh.patch
       shell: bash
       name: Download
     - run: |
@@ -43,8 +44,7 @@ runs:
       shell: bash
       name: Fetch key
     - run: |
-        export GUIX_BINARY_FILE_NAME=guix-binary-nightly.x86_64-linux.tar.xz
-        sudo --preserve-env=GUIX_BINARY_FILE_NAME -- bash -c 'yes | bash guix-install.sh'
+        sudo -- bash guix-install.sh
       shell: bash
       name: Install Guix
     - run: sudo -i guix archive --generate-key
