@@ -29,12 +29,23 @@ runs:
   steps:
     # The default locale on Debian and Ubuntu is "C.UTF-8" which does not exist
     # in vanilla glibc.  Change to something that works for Guix and Debuntu.
-    - run: echo LANG=en_US.utf8 >> $GITHUB_ENV
-      shell: bash
-      name: Set LANG
     - run: |
-        wget -nv https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh?h=3893758dac76fc30b23d4715e849e262306f268d -O guix-install.sh
-        wget -nv https://raw.githubusercontent.com/TxGVNN/guix-install-action/v1/guix-install.sh.patch -O guix-install.sh.patch
+        GITHUB_ACTION_REPO="PromyLOPh/guix-install-action"
+        GITHUB_ACTION_VERSION="v1"
+        if [ -n "$GITHUB_ACTION_PATH" ]; then
+            IFS='/' read -ra PARTS <<< "$GITHUB_ACTION_PATH"
+            VERSION=${PARTS[-1]}
+            GITHUB_ACTION_REPO="${PARTS[-3]}/${PARTS[-2]}"
+        fi
+        echo LANG=en_US.utf8 >> $GITHUB_ENV
+        echo GUIX_INSTALL_SH_COMMIT=3893758dac76fc30b23d4715e849e262306f268d >> $GITHUB_ENV
+        echo GITHUB_ACTION_REPO=$GITHUB_ACTION_REPO >> $GITHUB_ENV
+        echo GITHUB_ACTION_VERSION=$GITHUB_ACTION_VERSION >> $GITHUB_ENV
+      shell: bash
+      name: Set ENV
+    - run: |
+        wget -nv "https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh?h=${GUIX_INSTALL_SH_COMMIT}" -O guix-install.sh
+        wget -nv "https://raw.githubusercontent.com/${GITHUB_ACTION_REPO}/${GITHUB_ACTION_VERSION}/guix-install.sh.patch" -O guix-install.sh.patch
         patch guix-install.sh < guix-install.sh.patch
       shell: bash
       name: Download
