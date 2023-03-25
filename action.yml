@@ -33,21 +33,34 @@ runs:
       shell: bash
       name: Set LANG
     - run: |
-        wget -nv https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh
         wget -nv https://ci.guix.gnu.org/search/latest/archive?query=spec:tarball+status:success+system:x86_64-linux+guix-binary.tar.xz -O guix-binary-nightly.x86_64-linux.tar.xz
       shell: bash
       name: Download
     - run: |
-        wget "https://savannah.gnu.org/people/viewgpg.php?user_id=127547" -qO - | sudo gpg --import -
-        wget "https://savannah.gnu.org/people/viewgpg.php?user_id=15145" -qO - | sudo gpg --import -
-      shell: bash
-      name: Fetch key
-    - run: |
-        export GUIX_BINARY_FILE_NAME=guix-binary-nightly.x86_64-linux.tar.xz
-        sudo --preserve-env=GUIX_BINARY_FILE_NAME -- bash -c 'yes | bash guix-install.sh'
+        sudo -- tar --extract --file "guix-binary-nightly.x86_64-linux.tar.xz" -C / --no-overwrite-dir
+        sudo -- groupadd --system guixbuild
+
+        for i in $(seq -w 1 10); do
+            sudo useradd -g guixbuild -G guixbuild -d /var/empty -s "$(which nologin)" -c "Guix build user $i" --system "guixbuilder${i}"
+        done
+
+        export GUIX_PATH=/var/guix/profiles/per-user/root/current-guix
+
+        sudo cp $GUIX_PATH/lib/systemd/system/{gnu-store.mount,guix-daemon.service} /etc/systemd/system/
+        sudo chmod 664 /etc/systemd/system/{gnu-store.mount,guix-daemon.service}
+        sudo systemctl daemon-reload
+        sudo systemctl enable --now gnu-store.mount guix-daemon.service
+
+        echo "$GUIX_PATH/bin" >> $GITHUB_PATH
       shell: bash
       name: Install Guix
-    - run: sudo -i guix archive --generate-key
+    - name: Authorize build farm
+      shell: bash
+      run: |
+          for F in /var/guix/profiles/per-user/root/current-guix/share/guix/*.pub; do
+              sudo /var/guix/profiles/per-user/root/current-guix/bin/guix archive --authorize < $F
+          done
+    - run: sudo /var/guix/profiles/per-user/root/current-guix/bin/guix archive --generate-key
       shell: bash
       name: Generate keys
     - run: |
@@ -56,26 +69,13 @@ runs:
         EOF
       shell: bash
       name: Create channel file
-    - run: guix pull --fallback -C ${{ runner.temp }}/channels.scm
+    - run: sudo /var/guix/profiles/per-user/root/current-guix/bin/guix pull --fallback -C ${{ runner.temp }}/channels.scm
       shell: bash
       name: Update Guix
       if: ${{ inputs.pullAfterInstall == 'true' }}
-    # Use daemon from user, so we don’t have to `guix pull` twice.
-    - run: |
-        sudo sed -i "s/root/${USER}/" /etc/systemd/system/guix-daemon.service
-        sudo systemctl daemon-reload
-        sudo systemctl restart guix-daemon
-      shell: bash
-      name: Restart daemon
-      if: ${{ inputs.pullAfterInstall == 'true' }}
-    # Initially inherit root’s Guix profile, so we can use guix commands without sudo
-    - run: |
-        echo "$HOME/.config/guix/current/bin" >> $GITHUB_PATH
-      shell: bash
-      name: Set PATH
     # Substitute newlines to work-around GitHubs single-line limitation.
     - run: |
-        echo "channels=$(guix describe -f channels | tr '\n' ' ')" >> $GITHUB_OUTPUT
+        echo "channels=$(/var/guix/profiles/per-user/root/current-guix/bin/guix describe -f channels | tr '\n' ' ')" >> $GITHUB_OUTPUT
       shell: bash
       name: guix describe
       id: guix-describe
