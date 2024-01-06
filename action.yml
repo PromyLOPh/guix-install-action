@@ -9,13 +9,7 @@ inputs:
     required: false
     # Use the GitHub mirror to decrease load on Savannah.
     default: |-
-      (map (lambda (chan)
-             (if (guix-channel? chan)
-                 (channel
-                  (inherit chan)
-                  (url "https://github.com/guix-mirror/guix.git"))
-                 chan))
-           %default-channels)
+      %default-channels
   pullAfterInstall:
     description: 'Run `guix pull` after installing Guix'
     required: false
