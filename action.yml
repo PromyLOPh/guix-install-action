@@ -28,32 +28,18 @@ runs:
       name: Set LANG
     - run: |
         wget -nv https://ci.guix.gnu.org/search/latest/archive?query=spec:tarball+status:success+system:x86_64-linux+guix-binary.tar.xz -O guix-binary-nightly.x86_64-linux.tar.xz
+        wget -nv https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh
       shell: bash
       name: Download
     - run: |
-        sudo -- tar --extract --file "guix-binary-nightly.x86_64-linux.tar.xz" -C / --no-overwrite-dir
-        sudo -- groupadd --system guixbuild
-
-        for i in $(seq -w 1 10); do
-            sudo useradd -g guixbuild -G guixbuild -d /var/empty -s "$(which nologin)" -c "Guix build user $i" --system "guixbuilder${i}"
-        done
+        export GUIX_BINARY_FILE_NAME=guix-binary-nightly.x86_64-linux.tar.xz
+        yes '' | bash guix-install.sh
 
         export GUIX_PATH=/var/guix/profiles/per-user/root/current-guix
-
-        sudo cp $GUIX_PATH/lib/systemd/system/{gnu-store.mount,guix-daemon.service} /etc/systemd/system/
-        sudo chmod 664 /etc/systemd/system/{gnu-store.mount,guix-daemon.service}
-        sudo systemctl daemon-reload
-        sudo systemctl enable --now gnu-store.mount guix-daemon.service
 
         echo "$GUIX_PATH/bin" >> $GITHUB_PATH
       shell: bash
       name: Install Guix
-    - name: Authorize build farm
-      shell: bash
-      run: |
-          for F in /var/guix/profiles/per-user/root/current-guix/share/guix/*.pub; do
-              sudo /var/guix/profiles/per-user/root/current-guix/bin/guix archive --authorize < $F
-          done
     - run: sudo /var/guix/profiles/per-user/root/current-guix/bin/guix archive --generate-key
       shell: bash
       name: Generate keys
