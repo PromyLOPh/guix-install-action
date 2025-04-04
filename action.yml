@@ -33,7 +33,7 @@ runs:
       name: Download
     - run: |
         export GUIX_BINARY_FILE_NAME=guix-binary-nightly.x86_64-linux.tar.xz
-        yes '' | bash guix-install.sh
+        sudo sh -c "yes '' | bash guix-install.sh"
 
         export GUIX_PATH=/var/guix/profiles/per-user/root/current-guix
 
