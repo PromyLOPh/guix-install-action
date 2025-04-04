@@ -32,19 +32,19 @@ jobs:
         run: guix archive --export hello > hello.nar
       # Upload all artifacts
       - name: Upload pack (Relocatable Binary)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: hello Relocatable Binary
           path: hello.tar.bz2
       - name: Upload pack (Docker)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: hello Docker image
           path: hello-docker.tar.gz
       # Store auto-generated signing key as well, so it can be authenticated
       # later
       - name: Upload nar
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: hello nar
           path: |
