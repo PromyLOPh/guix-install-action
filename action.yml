@@ -10,6 +10,39 @@ inputs:
     # Use the GitHub mirror to decrease load on Savannah.
     default: |-
       %default-channels
+  service-file:
+    description: 'Old service file based on privileged execution.'
+    required: false
+    default: |
+      # This is a "service unit file" for the systemd init system to launch
+      # 'guix-daemon'.  Drop it in /etc/systemd/system or similar to have
+      # 'guix-daemon' automatically started.
+
+      [Unit]
+      Description=Build daemon for GNU Guix
+
+      [Service]
+      ExecStart=/var/guix/profiles/per-user/root/current-guix/bin/guix-daemon \
+          --build-users-group=guixbuild --discover=yes
+      Environment='GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8
+
+      StandardOutput=syslog
+      StandardError=syslog
+
+      # Work around a nasty systemd ‘feature’ that kills the entire process tree
+      # (including the daemon!) if any child, such as cc1plus, runs out of memory.
+      OOMPolicy=continue
+
+      # Despite the name, this is rate-limited: a broken daemon will eventually fail.
+      Restart=always
+
+      # See <https://lists.gnu.org/archive/html/guix-devel/2016-04/msg00608.html>.
+      # Some package builds (for example, go@1.8.1) may require even more than
+      # 1024 tasks.
+      TasksMax=8192
+
+      [Install]
+      WantedBy=multi-user.target
   pullAfterInstall:
     description: 'Run `guix pull` after installing Guix'
     required: false
@@ -40,7 +73,11 @@ runs:
 
         export GUIX_PATH=/var/guix/profiles/per-user/root/current-guix
 
-        sudo cp $GUIX_PATH/lib/systemd/system/{gnu-store.mount,guix-daemon.service} /etc/systemd/system/
+        sudo cp $GUIX_PATH/lib/systemd/system/gnu-store.mount /etc/systemd/system/
+        cat <<EOF > ${{ runner.temp }}/guix-daemon.service
+          ${{ inputs.service-file }}
+        EOF
+        sudo cp ${{ runner.temp }}/guix-daemon.service /etc/systemd/system/
         sudo chmod 664 /etc/systemd/system/{gnu-store.mount,guix-daemon.service}
         sudo systemctl daemon-reload
         sudo systemctl enable --now gnu-store.mount guix-daemon.service
