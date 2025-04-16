@@ -100,7 +100,7 @@ runs:
         EOF
       shell: bash
       name: Create channel file
-    - run: sudo /var/guix/profiles/per-user/root/current-guix/bin/guix pull --fallback -C ${{ runner.temp }}/channels.scm
+    - run: sudo /var/guix/profiles/per-user/root/current-guix/bin/guix pull --fallback -C ${{ runner.temp }}/channels.scm || sudo /var/guix/profiles/per-user/root/current-guix/bin/guix pull --fallback -C ${{ runner.temp }}/channels.scm --url="https://codeberg.org/guix/guix-mirror"
       shell: bash
       name: Update Guix
       if: ${{ inputs.pullAfterInstall == 'true' }}
